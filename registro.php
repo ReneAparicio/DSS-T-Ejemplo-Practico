@@ -15,23 +15,30 @@
         <h2>Registro</h2>
 
         <form method="POST">
-            <input name="nombre" placeholder="Nombre">
-            <input name="correo" placeholder="Correo">
-            <input name="edad" placeholder="Edad">
+            <input name="nombre" placeholder="Nombre" required>
+            <input name="correo" placeholder="Correo" required>
+            <input name="edad" placeholder="Edad" required>
             <button>Registrar</button>
         </form>
 
         <?php
         if ($_POST) {
-            $nombre = $_POST['nombre'];
-            $correo = $_POST['correo'];
-            $edad = $_POST['edad'];
 
-            $sql = "INSERT INTO clientes (nombre, correo, edad)
-                    VALUES ('$nombre', '$correo', '$edad')";
-            $conn->query($sql);
+            $nombre = filter_input(INPUT_POST, 'nombre', FILTER_SANITIZE_SPECIAL_CHARS);
+            $correo = filter_input(INPUT_POST, 'correo', FILTER_VALIDATE_EMAIL);
+            $edad = filter_input(INPUT_POST, 'edad', FILTER_VALIDATE_INT);
 
-            echo "Cliente registrado";
+            if ($nombre && $correo && $edad) {
+
+                $stmt = $conn->prepare("INSERT INTO clientes (nombre, correo, edad) VALUES (?, ?, ?)");
+                $stmt->bind_param("ssi", $nombre, $correo, $edad);
+                $stmt->execute();
+
+                echo "Registro correcto";
+
+            } else {
+                echo "Datos inválidos";
+            }
         }
         ?>
 
