@@ -27,7 +27,8 @@ $result = $conn->query("SELECT * FROM comentarios WHERE producto_id = '$id'");
 
 while ($row = $result->fetch_assoc()) {
     echo "<div class='card'>";
-    echo "<b>" . $row['usuario'] . ":</b> " . $row['texto'];
+    echo "<b>" . htmlspecialchars($row['usuario'], ENT_QUOTES, 'UTF-8') . ":</b> "
+         . htmlspecialchars($row['texto'], ENT_QUOTES, 'UTF-8');
     echo "</div>";
 }
 ?>
